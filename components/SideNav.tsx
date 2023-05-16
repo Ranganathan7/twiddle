@@ -24,7 +24,6 @@ const SideNav: React.FC<{}> = () => {
   useEffect(() => {
     const setProvidersInitially = async () => {
       const response = await getProviders();
-      console.log(response);
       setProviders(response);
     };
     setProvidersInitially();
