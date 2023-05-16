@@ -12,6 +12,9 @@ export const metadata: Metadata = {
 const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/icons/logo.png" />
+      </head>
       <body>
         <Provider>
           <main>{children}</main>
