@@ -2,6 +2,7 @@ import React from "react";
 import "../styles/globals.css";
 import { Metadata } from "next";
 import Provider from "../components/Provider";
+import SideNav from "@/components/SideNav";
 
 export const metadata: Metadata = {
   title: "Twiddle",
@@ -19,7 +20,10 @@ const RootLayout: React.FC<{
       </head>
       <body>
         <Provider>
-          <main>{children}</main>
+          <div className="container mx-auto flex items-start sm:pr-4">
+            <SideNav />
+            <div className="min-h-screen flex-grow border-x">{children}</div>
+          </div>
         </Provider>
       </body>
     </html>
