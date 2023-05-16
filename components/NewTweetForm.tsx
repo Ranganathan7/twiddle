@@ -1,14 +1,21 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Button from "./Button";
 import ProfileImage from "./ProfileImage";
 import { useSession } from "next-auth/react";
+import { api } from "@/utils/api";
 
 function updateTextAreaSize(textarea?: HTMLTextAreaElement) {
-  if(!textarea) return;
+  if (!textarea) return;
   textarea.style.height = "0";
-  textarea.style.height = `${textarea.scrollHeight}px`
+  textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
 const NewTweetForm: React.FC = () => {
@@ -18,16 +25,29 @@ const NewTweetForm: React.FC = () => {
   const inputRef = useCallback((textarea: HTMLTextAreaElement) => {
     updateTextAreaSize(textarea);
     textareaRef.current = textarea;
-  }, [])
+  }, []);
+  const createTweet = api.tweet.create.useMutation({
+    onSuccess: (tweet) => {
+      console.log(tweet);
+    }
+  });
 
   useEffect(() => {
     updateTextAreaSize(textareaRef.current);
-  }, [input])
+  }, [input]);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    createTweet.mutate({ content: input });
+  };
 
   if (session.status !== "authenticated") return <></>;
 
   return (
-    <form className="flex flex-col gap-2 border-b px-4 py-2">
+    <form
+      className="flex flex-col gap-2 border-b px-4 py-2"
+      onSubmit={handleSubmit}
+    >
       <div className="flex gap-4">
         <ProfileImage src={session.data?.user?.image} className="" />
         <textarea
@@ -38,7 +58,9 @@ const NewTweetForm: React.FC = () => {
           placeholder="What's happening?"
         />
       </div>
-      <Button className="self-end">Tweet</Button>
+      <Button className="self-end" type="submit">
+        Tweet
+      </Button>
     </form>
   );
 };
