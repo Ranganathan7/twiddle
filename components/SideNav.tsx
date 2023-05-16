@@ -50,10 +50,9 @@ const SideNav: React.FC<{}> = () => {
             {providers &&
               Object.values(providers).map((provider: ClientSafeProvider) => {
                 return (
-                  <li>
+                  <li key={provider.name}>
                     <button
                       onClick={() => signIn(provider.id)}
-                      key={provider.name}
                       className="flex flex-row justify-center items-center gap-1"
                     >
                       <Image
@@ -69,7 +68,6 @@ const SideNav: React.FC<{}> = () => {
               })}
           </>
         )}
-        <li></li>
       </ul>
     </nav>
   );
