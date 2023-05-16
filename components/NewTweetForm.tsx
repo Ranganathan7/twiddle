@@ -10,7 +10,6 @@ import React, {
 import Button from "./Button";
 import ProfileImage from "./ProfileImage";
 import { useSession } from "next-auth/react";
-import { api } from "@/utils/api";
 
 function updateTextAreaSize(textarea?: HTMLTextAreaElement) {
   if (!textarea) return;
@@ -26,11 +25,6 @@ const NewTweetForm: React.FC = () => {
     updateTextAreaSize(textarea);
     textareaRef.current = textarea;
   }, []);
-  const createTweet = api.tweet.create.useMutation({
-    onSuccess: (tweet) => {
-      console.log(tweet);
-    }
-  });
 
   useEffect(() => {
     updateTextAreaSize(textareaRef.current);
@@ -38,7 +32,6 @@ const NewTweetForm: React.FC = () => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    createTweet.mutate({ content: input });
   };
 
   if (session.status !== "authenticated") return <></>;
