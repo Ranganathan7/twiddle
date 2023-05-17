@@ -66,9 +66,9 @@ const NewTweetForm: React.FC<{
             content: responseBody.tweet.content,
             likeCount: 0,
             user: {
-              id: session.data.user.id as string,
-              image: session.data.user.image as string,
-              name: session.data.user.name as string,
+              id: session.data.user.id,
+              image: session.data.user?.image || null,
+              name: session.data.user?.name || null,
             },
             likedByMe: false,
           },
@@ -102,7 +102,11 @@ const NewTweetForm: React.FC<{
           placeholder="What's happening?"
         />
       </div>
-      <Button className="self-end" type="submit" disabled={tweetSubmitLoading}>
+      <Button
+        className="self-end"
+        type="submit"
+        disabled={tweetSubmitLoading || input.length === 0}
+      >
         Twiddle
       </Button>
     </form>
