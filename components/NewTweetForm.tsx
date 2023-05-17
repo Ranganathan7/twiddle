@@ -1,7 +1,9 @@
 "use client";
 
 import React, {
+  Dispatch,
   FormEvent,
+  SetStateAction,
   useCallback,
   useEffect,
   useRef,
@@ -10,6 +12,7 @@ import React, {
 import Button from "./Button";
 import ProfileImage from "./ProfileImage";
 import { useSession } from "next-auth/react";
+import { Tweet } from "./TweetsList";
 
 function updateTextAreaSize(textarea?: HTMLTextAreaElement) {
   if (!textarea) return;
@@ -17,7 +20,9 @@ function updateTextAreaSize(textarea?: HTMLTextAreaElement) {
   textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
-const NewTweetForm: React.FC = () => {
+const NewTweetForm: React.FC<{
+  setTweets: Dispatch<SetStateAction<Tweet[]>>;
+}> = ({ setTweets }) => {
   const session = useSession();
   const [input, setInput] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement>();
@@ -25,6 +30,7 @@ const NewTweetForm: React.FC = () => {
     updateTextAreaSize(textarea);
     textareaRef.current = textarea;
   }, []);
+  const [tweetSubmitLoading, setTweetSubmitLoading] = useState<boolean>(false);
 
   useEffect(() => {
     updateTextAreaSize(textareaRef.current);
@@ -32,10 +38,14 @@ const NewTweetForm: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (session.status !== "authenticated") {
+      return;
+    }
     const reqBody = {
       content: input.trim(),
       userId: session?.data?.user.id,
     };
+    setTweetSubmitLoading(true);
     try {
       const response = await fetch("/api/tweets/new", {
         method: "POST",
@@ -48,9 +58,27 @@ const NewTweetForm: React.FC = () => {
       } else {
         //tweet created successfully
         setInput("");
+        // pushing this new tweet into the tweet list
+        setTweets((tweets) => [
+          {
+            id: responseBody.tweet.id,
+            createdAt: responseBody.tweet.createdAt,
+            content: responseBody.tweet.content,
+            likeCount: 0,
+            user: {
+              id: session.data.user.id as string,
+              image: session.data.user.image as string,
+              name: session.data.user.name as string,
+            },
+            likedByMe: false,
+          },
+          ...tweets,
+        ]);
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setTweetSubmitLoading(false);
     }
   };
 
@@ -74,7 +102,7 @@ const NewTweetForm: React.FC = () => {
           placeholder="What's happening?"
         />
       </div>
-      <Button className="self-end" type="submit">
+      <Button className="self-end" type="submit" disabled={tweetSubmitLoading}>
         Twiddle
       </Button>
     </form>

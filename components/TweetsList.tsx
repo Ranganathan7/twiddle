@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { TweetCard } from "./TweetCard";
 import { useSession } from "next-auth/react";
 
-interface Tweet {
+export interface Tweet {
   id: string;
   content: string;
   createdAt: Date;
@@ -14,10 +14,12 @@ interface Tweet {
   user: { id: string; image: string | null; name: string | null };
 }
 
-const TweetsList: React.FC = () => {
+const TweetsList: React.FC<{
+  tweets: Tweet[];
+  setTweets: Dispatch<SetStateAction<Tweet[]>>;
+}> = ({ tweets, setTweets }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
-  const [tweets, setTweets] = useState<Tweet[]>([]);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
 

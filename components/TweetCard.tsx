@@ -6,15 +6,7 @@ import Link from "next/link";
 import { VscHeartFilled, VscHeart } from "react-icons/vsc";
 import { useSession } from "next-auth/react";
 import IconHoverEffect from "./IconHoverEffect";
-
-interface Tweet {
-  id: string;
-  content: string;
-  createdAt: Date;
-  likeCount: number;
-  likedByMe: boolean;
-  user: { id: string; image: string | null; name: string | null };
-}
+import { Tweet } from "./TweetsList";
 
 export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
   const session = useSession();
