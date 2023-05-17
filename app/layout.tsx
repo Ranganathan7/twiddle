@@ -3,6 +3,7 @@ import "../styles/globals.css";
 import { Metadata } from "next";
 import Provider from "../components/Provider";
 import SideNav from "@/components/SideNav";
+import { Session } from "next-auth";
 
 export const metadata: Metadata = {
   title: "Twiddle",
@@ -12,14 +13,15 @@ export const metadata: Metadata = {
 
 const RootLayout: React.FC<{
   children: React.ReactNode;
-}> = ({ children }) => {
+  session: Session | null;
+}> = ({ children, session }) => {
   return (
     <html lang="en">
       <head>
         <link rel="icon" href="/icons/logo.png" />
       </head>
       <body>
-        <Provider>
+        <Provider session={session}>
           <div className="container mx-auto flex items-start sm:pr-4">
             <SideNav />
             <div className="min-h-screen flex-grow border-x">{children}</div>
