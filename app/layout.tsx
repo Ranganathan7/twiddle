@@ -13,15 +13,14 @@ export const metadata: Metadata = {
 
 const RootLayout: React.FC<{
   children: React.ReactNode;
-  session: Session | null;
-}> = ({ children, session }) => {
+}> = ({ children }) => {
   return (
     <html lang="en">
       <head>
         <link rel="icon" href="/icons/logo.png" />
       </head>
       <body>
-        <Provider session={session}>
+        <Provider>
           <div className="container mx-auto flex items-start sm:pr-4">
             <SideNav />
             <div className="min-h-screen flex-grow border-x">{children}</div>
