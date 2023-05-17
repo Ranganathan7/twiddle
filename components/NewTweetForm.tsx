@@ -75,7 +75,7 @@ const NewTweetForm: React.FC = () => {
         />
       </div>
       <Button className="self-end" type="submit">
-        Tweet
+        Twiddle
       </Button>
     </form>
   );

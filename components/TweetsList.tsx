@@ -42,7 +42,6 @@ const TweetsList: React.FC = () => {
         throw responseBody;
       } else {
         //tweets fetched successfully
-        console.timeLog(responseBody.tweets);
         // setTweets((prevTweets) => [...prevTweets, responseBody.tweets]);
         setTweets((tweets) => [...tweets, ...responseBody.tweets]);
         if (responseBody.nextCursor) {

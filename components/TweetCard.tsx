@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ProfileImage from "./ProfileImage";
 import Link from "next/link";
 import { VscHeartFilled, VscHeart } from "react-icons/vsc";
@@ -18,6 +18,10 @@ interface Tweet {
 
 export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
   const session = useSession();
+  const [isToggleLikeLoading, setIsToggleLikeLoading] =
+    useState<boolean>(false);
+  const [tweetLikeCount, setTweetLikeCount] = useState<number>(tweet.likeCount);
+  const [tweetLikedByMe, setTweetLikedByMe] = useState<boolean>(tweet.likedByMe);
 
   function dateFormatter(createdAt: Date) {
     const date = new Date(createdAt);
@@ -29,6 +33,34 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
     return date.toLocaleTimeString();
   }
 
+  async function toggleLike() {
+    setIsToggleLikeLoading(true);
+    if (tweetLikedByMe) {
+      setTweetLikedByMe(false);
+      setTweetLikeCount((prevLikeCount) => prevLikeCount - 1);
+    } else {
+      setTweetLikedByMe(true);
+      setTweetLikeCount((prevLikeCount) => prevLikeCount + 1);
+    }
+    try {
+      const response = await fetch("/api/tweets/toggleLike", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tweetId: tweet.id,
+          userId: session?.data?.user?.id,
+        }),
+      });
+      const responseBody = await response.json();
+      if (responseBody.error) {
+        throw responseBody;
+      } 
+    } catch (err) {
+    } finally {
+      setIsToggleLikeLoading(false);
+    }
+  }
+
   return (
     <li className="flex gap-4 border-b px-4 py-4">
       <Link href={`/profile/${tweet.user.id}`}>
@@ -37,7 +69,7 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
       <div className="flex flex-col flex-grow">
         <div className="flex gap-1">
           <Link
-            href={`/profile/${tweet.user.image}`}
+            href={`/profile/${tweet.user.id}`}
             className="font-bold outline-none hover:underline focus-visible:underline"
           >
             {tweet.user.name}
@@ -54,18 +86,22 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
         {!session?.data?.user ? (
           <div className="mb-1 mt-1 flex items-center gap-2 self-start text-gray-500">
             <VscHeart />
-            <span>{tweet.likeCount}</span>
+            <span>{tweetLikeCount}</span>
           </div>
         ) : (
           <button
             className={`group mb-1 mt-1 gap-2 flex flex-row items-center self-start transition-colors duration-200 ${
-              tweet.likedByMe ? "text-red-500" : "text-gray-500 hover:text-red-500 focus-visible:text-red-500"
+              tweet.likedByMe
+                ? "text-red-500"
+                : "text-gray-500 hover:text-red-500 focus-visible:text-red-500"
             }`}
+            onClick={toggleLike}
+            disabled={isToggleLikeLoading}
           >
             <IconHoverEffect red>
-              {tweet.likedByMe ? <VscHeartFilled /> : <VscHeart />}
+              {tweetLikedByMe ? <VscHeartFilled className="fill-red-500" /> : <VscHeart />}
             </IconHoverEffect>
-            <span>{tweet.likeCount}</span>
+            <span>{tweetLikeCount}</span>
           </button>
         )}
       </div>
