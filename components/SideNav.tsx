@@ -12,6 +12,8 @@ import {
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Image from "next/legacy/image";
+import IconHoverEffect from "./IconHoverEffect";
+import { VscAccount, VscHome, VscSignOut, VscSignIn } from "react-icons/vsc";
 
 const SideNav: React.FC<{}> = () => {
   const session = useSession();
@@ -33,16 +35,37 @@ const SideNav: React.FC<{}> = () => {
     <nav className="sticky top-0 py-4 px-2">
       <ul className="flex flex-col items-start justify-center gap-2 whitespace-nowrap">
         <li>
-          <Link href="/">Home</Link>
+          <Link href="/">
+            <IconHoverEffect>
+              <span className="flex items-center gap-2">
+                <VscHome className="h-8 w-8" />
+                <span className="max-sm:hidden text-lg">Home</span>
+              </span>
+            </IconHoverEffect>
+          </Link>
         </li>
         {user && (
           <li>
-            <Link href={`/profile/${user.id}`}>Profile</Link>
+            <Link href={`/profile/${user.id}`}>
+            <IconHoverEffect>
+              <span className="flex items-center gap-2">
+                <VscAccount className="h-8 w-8" />
+                <span className="max-sm:hidden text-lg">Profile</span>
+              </span>
+            </IconHoverEffect>
+            </Link>
           </li>
         )}
         {user ? (
           <li>
-            <button onClick={() => signOut()}>Sign Out</button>
+            <button onClick={() => signOut()}>
+            <IconHoverEffect red>
+              <span className="flex items-center gap-2">
+                <VscSignOut className="h-8 w-8 fill-red-700" />
+                <span className="max-sm:hidden text-lg text-red-700">Log Out</span>
+              </span>
+            </IconHoverEffect>
+            </button>
           </li>
         ) : (
           <>
@@ -54,13 +77,18 @@ const SideNav: React.FC<{}> = () => {
                       onClick={() => signIn(provider.id)}
                       className="flex flex-row justify-center items-center gap-1"
                     >
-                      <Image
-                        src={`/icons/${provider.id}.png`}
-                        alt={`${provider.name}-icon`}
-                        height={23}
-                        width={23}
-                      />
-                      Sign In
+                      <IconHoverEffect>
+                        <span className="flex items-center gap-1">
+                          <VscSignIn className="h-8 w-8 fill-green-700" />
+                          <Image
+                            src={`/icons/${provider.id}.png`}
+                            alt={`${provider.name}-icon`}
+                            height={35}
+                            width={35}
+                          />
+                          <span className="max-sm:hidden text-lg text-green-700">Log In</span>
+                        </span>
+                      </IconHoverEffect>
                     </button>
                   </li>
                 );
