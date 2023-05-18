@@ -13,6 +13,7 @@ import Button from "./Button";
 import ProfileImage from "./ProfileImage";
 import { useSession } from "next-auth/react";
 import { Tweet } from "./TweetsList";
+import { toast } from "react-toastify";
 
 function updateTextAreaSize(textarea?: HTMLTextAreaElement) {
   if (!textarea) return;
@@ -76,7 +77,7 @@ const NewTweetForm: React.FC<{
         ]);
       }
     } catch (err) {
-      console.log(err);
+      toast.error(JSON.stringify(err));
     } finally {
       setTweetSubmitLoading(false);
     }

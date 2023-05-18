@@ -3,7 +3,7 @@ import "../styles/globals.css";
 import { Metadata } from "next";
 import Provider from "../components/Provider";
 import SideNav from "@/components/SideNav";
-import { Session } from "next-auth";
+import Toast from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "Twiddle",
@@ -26,6 +26,7 @@ const RootLayout: React.FC<{
             <div className="min-h-screen flex-grow border-x">{children}</div>
           </div>
         </Provider>
+        <Toast />
       </body>
     </html>
   );

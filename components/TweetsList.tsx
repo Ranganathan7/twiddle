@@ -4,6 +4,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { TweetCard } from "./TweetCard";
 import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export interface Tweet {
   id: string;
@@ -18,7 +19,6 @@ const TweetsList: React.FC<{
   tweets: Tweet[];
   setTweets: Dispatch<SetStateAction<Tweet[]>>;
 }> = ({ tweets, setTweets }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
@@ -28,7 +28,6 @@ const TweetsList: React.FC<{
   }, []);
 
   async function fetchNewTweets() {
-    setIsLoading(true);
     try {
       const response = await fetch("/api/tweets", {
         method: "POST",
@@ -54,10 +53,8 @@ const TweetsList: React.FC<{
         }
       }
     } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
-    }
+      toast.error(JSON.stringify(err));
+    } 
   }
 
   if (tweets === null || tweets?.length === 0) {

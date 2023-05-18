@@ -7,6 +7,7 @@ import { VscHeartFilled, VscHeart } from "react-icons/vsc";
 import { useSession } from "next-auth/react";
 import IconHoverEffect from "./IconHoverEffect";
 import { Tweet } from "./TweetsList";
+import { toast } from "react-toastify";
 
 export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
   const session = useSession();
@@ -48,6 +49,7 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
         throw responseBody;
       } 
     } catch (err) {
+        toast.error(JSON.stringify(err))
     } finally {
       setIsToggleLikeLoading(false);
     }
