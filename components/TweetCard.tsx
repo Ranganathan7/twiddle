@@ -14,7 +14,9 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
   const [isToggleLikeLoading, setIsToggleLikeLoading] =
     useState<boolean>(false);
   const [tweetLikeCount, setTweetLikeCount] = useState<number>(tweet.likeCount);
-  const [tweetLikedByMe, setTweetLikedByMe] = useState<boolean>(tweet.likedByMe);
+  const [tweetLikedByMe, setTweetLikedByMe] = useState<boolean>(
+    tweet.likedByMe
+  );
 
   function dateFormatter(createdAt: Date) {
     const date = new Date(createdAt);
@@ -47,9 +49,9 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
       const responseBody = await response.json();
       if (responseBody.error) {
         throw responseBody;
-      } 
+      }
     } catch (err) {
-        toast.error(JSON.stringify(err))
+      toast.error(JSON.stringify(err));
     } finally {
       setIsToggleLikeLoading(false);
     }
@@ -85,7 +87,7 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
         ) : (
           <button
             className={`group mb-1 mt-1 gap-2 flex flex-row items-center self-start transition-colors duration-200 ${
-              tweet.likedByMe
+              tweetLikedByMe
                 ? "text-red-500"
                 : "text-gray-500 hover:text-red-500 focus-visible:text-red-500"
             }`}
@@ -93,7 +95,11 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
             disabled={isToggleLikeLoading}
           >
             <IconHoverEffect red>
-              {tweetLikedByMe ? <VscHeartFilled className="fill-red-500" /> : <VscHeart />}
+              {tweetLikedByMe ? (
+                <VscHeartFilled className="fill-red-500" />
+              ) : (
+                <VscHeart />
+              )}
             </IconHoverEffect>
             <span>{tweetLikeCount}</span>
           </button>

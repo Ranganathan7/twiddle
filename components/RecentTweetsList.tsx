@@ -18,14 +18,19 @@ export interface Tweet {
 const RecentTweetsList: React.FC<{
   tweets: Tweet[];
   setTweets: Dispatch<SetStateAction<Tweet[]>>;
-}> = ({ tweets, setTweets }) => {
+}> = () => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
+  const [tweets, setTweets] = useState<Tweet[]>([]);
 
   useEffect(() => {
     fetchNewTweets(true);
-  }, []);
+    // for reloading and resetting new tweets
+    return(() => {
+      setTweets([]);
+    })
+  }, [session]);
 
   async function fetchNewTweets(isFirstTime = false) {
     try {
@@ -35,7 +40,7 @@ const RecentTweetsList: React.FC<{
         body: JSON.stringify({
           limit: 10,
           userId: session?.data?.user?.id,
-          cursor: cursor,
+          cursor: isFirstTime ? undefined : cursor,
         }),
       });
       const responseBody = await response.json();

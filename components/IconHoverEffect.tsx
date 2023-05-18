@@ -10,7 +10,7 @@ const IconHoverEffect: React.FC<{
 
   return (
     <div
-      className={`rounded-full p-2 transition-colors duraion-200 ${colorClasses}`}
+      className={`rounded-full p-2 transition-colors duration-200 ${colorClasses}`}
     >
       {children}
     </div>

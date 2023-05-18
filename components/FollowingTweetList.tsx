@@ -15,7 +15,10 @@ const FollowingTweetsList: React.FC = () => {
 
   useEffect(() => {
     fetchNewTweets(true);
-  }, []);
+    return(() => {
+      setTweets([]);
+    })
+  }, [session]);
 
   async function fetchNewTweets(isFirstTime = false) {
     try {
@@ -25,7 +28,7 @@ const FollowingTweetsList: React.FC = () => {
         body: JSON.stringify({
           limit: 10,
           userId: session?.data?.user?.id,
-          cursor: cursor,
+          cursor: isFirstTime ? undefined : cursor,
           onlyFollowing: true,
         }),
       });
