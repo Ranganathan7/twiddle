@@ -6,12 +6,14 @@ import { TweetCard } from "./TweetCard";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { Tweet } from "./RecentTweetsList";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 const FollowingTweetsList: React.FC = () => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
   const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchNewTweets(true);
@@ -21,6 +23,7 @@ const FollowingTweetsList: React.FC = () => {
   }, [session]);
 
   async function fetchNewTweets(isFirstTime = false) {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/tweets", {
         method: "POST",
@@ -51,8 +54,12 @@ const FollowingTweetsList: React.FC = () => {
       }
     } catch (err) {
       toast.error(JSON.stringify(err));
+    } finally {
+      setIsLoading(false);
     }
   }
+
+  if(isLoading) return <LoadingSpinner />
 
   if (tweets === null || tweets?.length === 0) {
     return (
@@ -66,7 +73,7 @@ const FollowingTweetsList: React.FC = () => {
         dataLength={tweets.length}
         next={fetchNewTweets}
         hasMore={hasMore}
-        loader={"Loading..."}
+        loader={<LoadingSpinner />}
       >
         {tweets.map((tweet) => (
           <TweetCard tweet={tweet} key={tweet.id} />

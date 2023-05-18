@@ -5,6 +5,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { TweetCard } from "./TweetCard";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { LoadingSpinner } from "./LoadingSpinner";
 
 export interface Tweet {
   id: string;
@@ -23,6 +24,7 @@ const RecentTweetsList: React.FC<{
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
   const [tweets, setTweets] = useState<Tweet[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     fetchNewTweets(true);
@@ -33,6 +35,7 @@ const RecentTweetsList: React.FC<{
   }, [session]);
 
   async function fetchNewTweets(isFirstTime = false) {
+    setIsLoading(true);
     try {
       const response = await fetch("/api/tweets", {
         method: "POST",
@@ -62,8 +65,12 @@ const RecentTweetsList: React.FC<{
       }
     } catch (err) {
       toast.error(JSON.stringify(err));
+    } finally {
+      setIsLoading(false);
     }
   }
+
+  if(isLoading) return <LoadingSpinner />
 
   if (tweets === null || tweets?.length === 0) {
     return (
@@ -77,7 +84,7 @@ const RecentTweetsList: React.FC<{
         dataLength={tweets.length}
         next={fetchNewTweets}
         hasMore={hasMore}
-        loader={"Loading..."}
+        loader={<LoadingSpinner />}
       >
         {tweets.map((tweet) => (
           <TweetCard tweet={tweet} key={tweet.id} />
