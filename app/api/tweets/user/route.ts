@@ -3,17 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { limit, cursor, userId, onlyFollowing } = await req.json();
+    const { limit, cursor, userId } = await req.json();
     if (cursor && (!cursor.createdAt || !cursor.id)) {
       throw new Error();
     }
-    if (onlyFollowing && !userId) return new Error();
+    if (!userId) return new Error();
     const data = await prisma.tweet.findMany({
-      where: onlyFollowing
-        ? {
-            user: { followers: { some: { id: userId } } },
-          }
-        : undefined,
+      where: {
+        userId: userId,
+      },
       take: limit ? limit + 1 : undefined,
       cursor: cursor ? { createdAt_id: cursor } : undefined,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -45,7 +43,7 @@ export const POST = async (req: NextRequest) => {
     }));
     return NextResponse.json(
       {
-        message: "All tweets fetched successfully!",
+        message: "All tweets of the user fetched successfully!",
         tweets: tweets,
         nextCursor: nextCursor,
       },
@@ -53,7 +51,7 @@ export const POST = async (req: NextRequest) => {
     );
   } catch (err) {
     return NextResponse.json(
-      { error: "Failed to fetch the tweets!" },
+      { error: "Failed to fetch the tweets of the user!" },
       { status: 500 }
     );
   }

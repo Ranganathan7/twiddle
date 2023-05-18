@@ -3,36 +3,30 @@
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { TweetCard } from "./TweetCard";
-import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { Tweet } from "./RecentTweetsList";
 import { LoadingSpinner } from "./LoadingSpinner";
 
-const FollowingTweetsList: React.FC = () => {
+const UserTweetsList: React.FC<{ userId: string }> = ({ userId }) => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
-  const session = useSession();
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchNewTweets(true);
-    return(() => {
-      setTweets([]);
-    })
-  }, [session]);
+    fetchNewTweets();
+  }, []);
 
-  async function fetchNewTweets(isFirstTime = false) {
+  async function fetchNewTweets() {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/tweets", {
+      const response = await fetch("/api/tweets/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           limit: 10,
-          userId: session?.data?.user?.id,
-          cursor: isFirstTime ? undefined : cursor,
-          onlyFollowing: true,
+          userId: userId,
+          cursor: cursor,
         }),
       });
       const responseBody = await response.json();
@@ -40,11 +34,7 @@ const FollowingTweetsList: React.FC = () => {
         throw responseBody;
       } else {
         //tweets fetched successfully
-        if (!isFirstTime)
-          setTweets((tweets) => [...tweets, ...responseBody.tweets]);
-        else {
-          setTweets(responseBody.tweets);
-        }
+        setTweets((tweets) => [...tweets, ...responseBody.tweets]);
         if (responseBody.nextCursor) {
           setCursor(responseBody.nextCursor);
           setHasMore(true);
@@ -81,4 +71,4 @@ const FollowingTweetsList: React.FC = () => {
   );
 };
 
-export default FollowingTweetsList;
+export default UserTweetsList;
