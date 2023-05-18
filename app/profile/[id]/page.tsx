@@ -96,9 +96,9 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
           <h1 className="text-lg font-bold">{user.name}</h1>
           <div className="text-gray-500">
             {user.tweetsCount} {user.tweetsCount <= 1 ? "Twiddle" : "Twiddles"}
-            {" - "}
+            {"  -  "}
             {followersCount} {followersCount <= 1 ? "Follower" : "Followers"}
-            {" - "}
+            {"  -  "}
             {user.followsCount}{" "}
             {user.followsCount <= 1 ? "Following" : "Following"}
           </div>
