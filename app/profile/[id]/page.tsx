@@ -9,6 +9,7 @@ import { VscArrowLeft } from "react-icons/vsc";
 import ProfileImage from "@/components/ProfileImage";
 import UserTweetsList from "@/components/UserTweetList";
 import FollowButton from "@/components/FollowButton";
+import { useSession } from "next-auth/react";
 
 interface User {
   name: string;
@@ -27,6 +28,7 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [isToggleFollowLoading, setIsToggleFollowLoading] =
     useState<boolean>(false);
   const router = useRouter();
+  const session = useSession();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,7 +65,10 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
       const response = await fetch("/api/users/toggleFollow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          userId: params.id,
+          currentUserId: session?.data?.user.id,
+        }),
       });
       const data = await response.json();
       if (data.error) throw data;
