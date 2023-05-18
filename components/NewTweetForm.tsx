@@ -57,8 +57,6 @@ const NewTweetForm: React.FC<{
       if (responseBody.error) {
         throw responseBody;
       } else {
-        //tweet created successfully
-        setInput("");
         // pushing this new tweet into the tweet list
         setTweets((tweets) => [
           {
@@ -75,6 +73,8 @@ const NewTweetForm: React.FC<{
           },
           ...tweets,
         ]);
+        //tweet created successfully
+        setInput("");
       }
     } catch (err) {
       toast.error(JSON.stringify(err));

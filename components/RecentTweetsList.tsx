@@ -19,11 +19,10 @@ export interface Tweet {
 const RecentTweetsList: React.FC<{
   tweets: Tweet[];
   setTweets: Dispatch<SetStateAction<Tweet[]>>;
-}> = () => {
+}> = ({ tweets, setTweets }) => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
-  const [tweets, setTweets] = useState<Tweet[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {

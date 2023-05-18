@@ -21,7 +21,7 @@ const RootLayout: React.FC<{
       </head>
       <body>
         <Provider>
-          <div className="container mx-auto flex items-start sm:pr-4">
+          <div className="container mx-auto flex items-start">
             <SideNav />
             <div className="min-h-screen flex-grow border-x">{children}</div>
           </div>

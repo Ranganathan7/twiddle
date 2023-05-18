@@ -25,7 +25,9 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
 
   function timeFormatter(createdAt: Date) {
     const date = new Date(createdAt);
-    return date.toLocaleTimeString();
+    return `${date.getHours() + 1}:${
+      date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+    }`;
   }
 
   async function toggleLike() {
