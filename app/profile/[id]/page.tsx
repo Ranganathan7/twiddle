@@ -24,7 +24,8 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [followersCount, setFollowersCount] = useState<number>(0);
   const [isUserFollowing, setIsUserFollowing] = useState<boolean>(false);
-  const [isToggleFollowLoading, setIsToggleFollowLoading] = useState<boolean>(false);
+  const [isToggleFollowLoading, setIsToggleFollowLoading] =
+    useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -59,7 +60,7 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
       setFollowersCount((prev) => prev + 1);
     }
     try {
-      const response = await fetch("", {
+      const response = await fetch("/api/users/toggleFollow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
