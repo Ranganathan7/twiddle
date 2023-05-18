@@ -6,7 +6,7 @@ import Link from "next/link";
 import { VscHeartFilled, VscHeart } from "react-icons/vsc";
 import { useSession } from "next-auth/react";
 import IconHoverEffect from "./IconHoverEffect";
-import { Tweet } from "./TweetsList";
+import { Tweet } from "./RecentTweetsList";
 import { toast } from "react-toastify";
 
 export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {

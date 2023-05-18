@@ -25,8 +25,8 @@ const RootLayout: React.FC<{
             <SideNav />
             <div className="min-h-screen flex-grow border-x">{children}</div>
           </div>
+          <Toast />
         </Provider>
-        <Toast />
       </body>
     </html>
   );

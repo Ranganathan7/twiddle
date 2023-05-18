@@ -1,33 +1,23 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { TweetCard } from "./TweetCard";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { Tweet } from "./RecentTweetsList";
 
-export interface Tweet {
-  id: string;
-  content: string;
-  createdAt: Date;
-  likeCount: number;
-  likedByMe: boolean;
-  user: { id: string; image: string | null; name: string | null };
-}
-
-const TweetsList: React.FC<{
-  tweets: Tweet[];
-  setTweets: Dispatch<SetStateAction<Tweet[]>>;
-}> = ({ tweets, setTweets }) => {
+const FollowingTweetsList: React.FC = () => {
   const [hasMore, setHasMore] = useState<boolean>(false);
   const [cursor, setCursor] = useState<{ id: string; createdAt: Date }>();
   const session = useSession();
+  const [tweets, setTweets] = useState<Tweet[]>([]);
 
   useEffect(() => {
-    fetchNewTweets();
+    fetchNewTweets(true);
   }, []);
 
-  async function fetchNewTweets() {
+  async function fetchNewTweets(isFirstTime = false) {
     try {
       const response = await fetch("/api/tweets", {
         method: "POST",
@@ -36,6 +26,7 @@ const TweetsList: React.FC<{
           limit: 10,
           userId: session?.data?.user?.id,
           cursor: cursor,
+          onlyFollowing: true,
         }),
       });
       const responseBody = await response.json();
@@ -43,8 +34,11 @@ const TweetsList: React.FC<{
         throw responseBody;
       } else {
         //tweets fetched successfully
-        // setTweets((prevTweets) => [...prevTweets, responseBody.tweets]);
-        setTweets((tweets) => [...tweets, ...responseBody.tweets]);
+        if (!isFirstTime)
+          setTweets((tweets) => [...tweets, ...responseBody.tweets]);
+        else {
+          setTweets(responseBody.tweets);
+        }
         if (responseBody.nextCursor) {
           setCursor(responseBody.nextCursor);
           setHasMore(true);
@@ -54,7 +48,7 @@ const TweetsList: React.FC<{
       }
     } catch (err) {
       toast.error(JSON.stringify(err));
-    } 
+    }
   }
 
   if (tweets === null || tweets?.length === 0) {
@@ -79,4 +73,4 @@ const TweetsList: React.FC<{
   );
 };
 
-export default TweetsList;
+export default FollowingTweetsList;

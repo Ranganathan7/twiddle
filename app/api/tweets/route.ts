@@ -3,11 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { limit, cursor, userId } = await req.json();
+    const { limit, cursor, userId, onlyFollowing } = await req.json();
     if (cursor && (!cursor.createdAt || !cursor.id)) {
       throw new Error();
     }
+    if (onlyFollowing && !userId) return new Error();
     const data = await prisma.tweet.findMany({
+      where: onlyFollowing
+        ? {
+            user: { followers: { some: { id: userId } } },
+          }
+        : undefined,
       take: limit ? limit + 1 : undefined,
       cursor: cursor ? { createdAt_id: cursor } : undefined,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
@@ -16,7 +22,7 @@ export const POST = async (req: NextRequest) => {
         content: true,
         createdAt: true,
         _count: { select: { likes: true } },
-        likes: userId ? false : { where: { userId: userId } },
+        likes: !userId ? false : { where: { userId: userId } },
         user: { select: { name: true, image: true, id: true } },
       },
     });

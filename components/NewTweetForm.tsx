@@ -12,7 +12,7 @@ import React, {
 import Button from "./Button";
 import ProfileImage from "./ProfileImage";
 import { useSession } from "next-auth/react";
-import { Tweet } from "./TweetsList";
+import { Tweet } from "./RecentTweetsList";
 import { toast } from "react-toastify";
 
 function updateTextAreaSize(textarea?: HTMLTextAreaElement) {
