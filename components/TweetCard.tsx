@@ -76,9 +76,9 @@ export const TweetCard: React.FC<{ tweet: Tweet }> = ({ tweet }) => {
           <span className="text-gray-500">
             {dateFormatter(tweet.createdAt)}
           </span>
-          <span className="text-gray-400 text-sm self-center">
+          {/* <span className="text-gray-400 text-sm self-center">
             {timeFormatter(tweet.createdAt)}
-          </span>
+          </span> */}
         </div>
         <p className="whitespace-pre-wrap">{tweet.content}</p>
         {!session?.data?.user ? (

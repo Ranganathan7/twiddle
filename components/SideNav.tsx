@@ -14,12 +14,10 @@ import React, { useEffect, useState } from "react";
 import Image from "next/legacy/image";
 import IconHoverEffect from "./IconHoverEffect";
 import { VscAccount, VscHome, VscSignOut, VscSignIn } from "react-icons/vsc";
-import { useRouter } from "next/navigation";
 
 const SideNav: React.FC<{}> = () => {
   const session = useSession();
   const user = session.data?.user;
-  const router = useRouter();
   const [providers, setProviders] = useState<Record<
     LiteralUnion<BuiltInProviderType, string>,
     ClientSafeProvider
@@ -63,7 +61,6 @@ const SideNav: React.FC<{}> = () => {
             <button
               onClick={() => {
                 signOut();
-                router.push("/");
               }}
             >
               <IconHoverEffect red>

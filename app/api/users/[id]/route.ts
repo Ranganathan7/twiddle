@@ -1,18 +1,19 @@
 import { prisma } from "@/utils/prisma.client";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (
+export const POST = async (
   req: NextRequest,
   { params }: { params: { id: string } }
 ) => {
   try {
+    const { currentUserId } = await req.json();
     const user = await prisma.user.findUnique({
       where: { id: params.id },
       select: {
         name: true,
         image: true,
         _count: { select: { followers: true, follows: true, tweets: true } },
-        followers: { where: { id: params.id } },
+        followers: { where: { id: currentUserId } },
       },
     });
     if (!user)

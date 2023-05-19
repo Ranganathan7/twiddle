@@ -34,7 +34,11 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
     const fetchUser = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/users/${params.id}`);
+        const response = await fetch(`/api/users/${params.id}`, { 
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currentUserId: session?.data?.user.id })
+         });
         const data = await response.json();
         if (data.error) throw data;
         else {
@@ -63,7 +67,7 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
     }
     try {
       const response = await fetch("/api/users/toggleFollow", {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: params.id,
@@ -94,13 +98,20 @@ const ProfilePage: React.FC<{ params: { id: string } }> = ({ params }) => {
         <ProfileImage src={user.image} className="flex-shrink-0" />
         <div className="ml-2 flex-grow">
           <h1 className="text-lg font-bold">{user.name}</h1>
-          <div className="text-gray-500">
-            {user.tweetsCount} {user.tweetsCount <= 1 ? "Twiddle" : "Twiddles"}
-            {"  -  "}
-            {followersCount} {followersCount <= 1 ? "Follower" : "Followers"}
-            {"  -  "}
-            {user.followsCount}{" "}
-            {user.followsCount <= 1 ? "Following" : "Following"}
+          <div className="text-gray-500 flex gap-2 max-sm:flex-col max-sm:gap-1">
+            <span>
+              {user.tweetsCount}{" "}
+              {user.tweetsCount <= 1 ? "Twiddle" : "Twiddles"}
+            </span>
+            <span className="max-sm:hidden">{"  -  "}</span>
+            <span>
+              {followersCount} {followersCount <= 1 ? "Follower" : "Followers"}
+            </span>
+            <span className="max-sm:hidden">{"  -  "}</span>
+            <span>
+              {user.followsCount}{" "}
+              {user.followsCount <= 1 ? "Following" : "Following"}
+            </span>
           </div>
         </div>
         <FollowButton
